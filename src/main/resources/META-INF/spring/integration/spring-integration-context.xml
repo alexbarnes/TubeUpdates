@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-http="http://www.springframework.org/schema/integration/http"
+	xmlns:int-xmpp="http://www.springframework.org/schema/integration/xmpp"
+	xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-2.1.xsd
+		http://www.springframework.org/schema/integration/xmpp http://www.springframework.org/schema/integration/xmpp/spring-integration-xmpp-2.1.xsd
+		http://www.springframework.org/schema/integration/mail http://www.springframework.org/schema/integration/mail/spring-integration-mail-2.1.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<int-xmpp:inbound-channel-adapter
+		xmpp-connection="googleTalkConnection" channel="requestChannel" />
+
+	<int:publish-subscribe-channel id="requestChannel"
+		apply-sequence="true" />
+
+	<int-http:outbound-gateway id="trainService"
+		url="http://cloud.tfl.gov.uk/TrackerNet/PredictionSummary/{line}"
+		request-channel="requestChannel" reply-channel="transformingChannel"
+		http-method="GET" extract-request-payload="false"
+		expected-response-type="java.lang.String">
+		<int-http:uri-variable name="line" expression="payload" />
+	</int-http:outbound-gateway>
+
+	<int-xmpp:xmpp-connection id="googleTalkConnection"
+		user="test@barnes-home.com" password="testing1234" host="talk.google.com"
+		port="5222" resource="resource" service-name="gmail.com" />
+
+	<int:channel id="enrichmentChannel" />
+
+	<int-mail:header-enricher input-channel="enrichmentChannel"
+		output-channel="mailChannel">
+		<int-mail:from value="test@barnes-home.com" />
+		<int-mail:to value="alex@barnes-home.com" />
+		<int-mail:subject value="Train Status" />
+	</int-mail:header-enricher>
+
+	<int:channel id="mailChannel" />
+
+	<int-mail:outbound-channel-adapter
+		channel="mailChannel" mail-sender="mailSender" />
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="info@zimjobs.org" />
+		<property name="password" value="zimjobs1234" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.debug">true</prop>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="statusConverter" class="com.devcentre.tube.converter.DummyTransformer" />
+
+	<int:channel id="transformingChannel" />
+	<int:transformer input-channel="transformingChannel"
+		output-channel="enrichmentChannel" expression="payload.toString()" />
+</beans>
