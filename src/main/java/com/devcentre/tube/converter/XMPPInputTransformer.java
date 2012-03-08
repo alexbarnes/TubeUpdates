@@ -33,7 +33,7 @@ public class XMPPInputTransformer {
 		
 		// Single provided argument (cannot be split) which is the word 'status' 
 		// - return status of all lines
-		if (split == null && input.equals("status")) {
+		if (split.length == 1 && input.equals("status")) {
 			log.info("Request [" + input + "] resulted in a status request");
 			return new TrackernetStatusRequest();
 		}

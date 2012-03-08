@@ -94,7 +94,9 @@
 
 	<!-- Transformer beans -->
 	<bean id="predictionSummaryToMailTransformer"
-		class="com.devcentre.tube.converter.PredictionSummaryToMailTransformer" />
+		class="com.devcentre.tube.converter.PredictionSummaryToMailTransformer" >
+		<constructor-arg ref="mailSender"/>
+	</bean>
 	<bean id="statusSummaryToMailTransformer"
 		class="com.devcentre.tube.converter.StatusSummaryToMailTranformer" />
 	<bean id="stationHelpXMPPTransformer" class="com.devcentre.tube.converter.StationHelpXMPPTransformer" />

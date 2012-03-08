@@ -77,7 +77,7 @@ public class PredictionHttpConverter implements HttpMessageConverter<PredictionS
 			throw new HttpMessageConversionException("Failed to convert response to: " + clazz, e);
 		}
 		
-		return null;
+		return summary;
 	}
 
 	@Override
