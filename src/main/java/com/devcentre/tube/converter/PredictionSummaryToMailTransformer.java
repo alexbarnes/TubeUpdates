@@ -19,7 +19,6 @@ public class PredictionSummaryToMailTransformer {
 		this.mailSender = mailSender;
 	}
 	
-	
 	public MimeMailMessage transform(PredictionSummary payload, @Header("xmpp_from") String from) throws MessagingException {
 		
 		MimeMailMessage message = new MimeMailMessage(mailSender.createMimeMessage());
@@ -64,8 +63,6 @@ public class PredictionSummaryToMailTransformer {
 		}
 		
 		message.getMimeMessageHelper().setText(buffer.toString(), true);
-		
 		return message;
 	}
-
 }

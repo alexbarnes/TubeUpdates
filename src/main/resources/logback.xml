@@ -9,15 +9,15 @@
 	</appender>
 
 	<logger name="org.springframework.integration">
-		<level value="TRACE" />
+		<level value="INFO" />
 	</logger>
 
 	<logger name="org.springframework">
-		<level value="TRACE" />
+		<level value="INFO" />
 	</logger>
 
 	<root>
-		<level value="TRACE" />
+		<level value="INFO" />
 		<appender-ref ref="CONSOLE" />
 	</root>
 

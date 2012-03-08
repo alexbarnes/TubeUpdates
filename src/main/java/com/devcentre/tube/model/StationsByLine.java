@@ -7,10 +7,10 @@ import java.util.Map;
 
 public class StationsByLine {
 	
-public static final Map<String, List<Station>> stationsByLine = createMap();
+public static final Map<Line, List<Station>> stationsByLine = createMap();
 	
-	private static Map<String, List<Station>> createMap() {
-		Map<String, List<Station>> map = new HashMap<String, List<Station>>();
+	private static Map<Line, List<Station>> createMap() {
+		Map<Line, List<Station>> map = new HashMap<Line, List<Station>>();
 		
 		List<Station> bakerlooLineStations = new ArrayList<Station>();
 		bakerlooLineStations.add(new Station("BST", "Baker Street"));
@@ -38,7 +38,7 @@ public static final Map<String, List<Station>> stationsByLine = createMap();
 		bakerlooLineStations.add(new Station("WLO", "Waterloo"));
 		bakerlooLineStations.add(new Station("WEM", "Wembley Central"));
 		bakerlooLineStations.add(new Station("WJN", "Willesden Junction"));
-		map.put("B", bakerlooLineStations);
+		map.put(new Line("", "B", "Bakerloo"), bakerlooLineStations);
         
 		List<Station> centralLineStations = new ArrayList<Station>();
 		centralLineStations.add(new Station("BNK","Bank"));
@@ -90,7 +90,7 @@ public static final Map<String, List<Station>> stationsByLine = createMap();
 		centralLineStations.add(new Station("WRP","West Ruislip"));
 		centralLineStations.add(new Station("WCT","White City"));
 		centralLineStations.add(new Station("WFD","Woodford"));
-		map.put("C", centralLineStations);
+		map.put(new Line("", "C", "Central"), centralLineStations);
 		
 		List<Station> districtLineStations = new ArrayList<Station>();
 		districtLineStations.add(new Station("ACT","Acton Town"));
@@ -151,7 +151,7 @@ public static final Map<String, List<Station>> stationsByLine = createMap();
 		districtLineStations.add(new Station("WCL","Whitechapel"));
 		districtLineStations.add(new Station("WDN","Wimbledon"));
 		districtLineStations.add(new Station("WMP","Wimbledon Park"));
-		map.put("D", districtLineStations);
+		map.put(new Line("", "D", "District"), districtLineStations);
 		
 		List<Station> hammersmithLineStations = new ArrayList<Station>();
 		hammersmithLineStations.add(new Station("ALD","Aldgate"));
@@ -191,7 +191,7 @@ public static final Map<String, List<Station>> stationsByLine = createMap();
 		hammersmithLineStations.add(new Station("WHM","West Ham"));
 		hammersmithLineStations.add(new Station("WMS","Westminster"));
 		hammersmithLineStations.add(new Station("WCL","Whitechapel"));
-		map.put("H", hammersmithLineStations);
+		map.put(new Line("", "H", "Hammersmith"), hammersmithLineStations);
 		
 		List<Station> jubileeLineStations = new ArrayList<Station>();
 		jubileeLineStations.add(new Station("BST","Baker Street"));
@@ -221,7 +221,7 @@ public static final Map<String, List<Station>> stationsByLine = createMap();
 		jubileeLineStations.add(new Station("WHD","West Hampstead"));
 		jubileeLineStations.add(new Station("WMS","Westminster"));
 		jubileeLineStations.add(new Station("WLG","Willesden Green"));
-		map.put("J", jubileeLineStations);
+		map.put(new Line("", "J", "Jubilee"), jubileeLineStations);
 		
 		List<Station> metropolitanLineStations = new ArrayList<Station>();
 		metropolitanLineStations.add(new Station("ALD","Aldgate"));
@@ -255,7 +255,7 @@ public static final Map<String, List<Station>> stationsByLine = createMap();
 		metropolitanLineStations.add(new Station("RUM","Ruislip Manor"));
 		metropolitanLineStations.add(new Station("UXB","Uxbridge"));
 		metropolitanLineStations.add(new Station("WAT","Watford"));
-		map.put("M", metropolitanLineStations);
+		map.put(new Line("", "M", "Metropolitan"), metropolitanLineStations);
 		
 		List<Station> northernLineStations = new ArrayList<Station>();
 		northernLineStations.add(new Station("ANG","Angel"));
@@ -308,7 +308,7 @@ public static final Map<String, List<Station>> stationsByLine = createMap();
 		northernLineStations.add(new Station("WLO","Waterloo"));
 		northernLineStations.add(new Station("WFY","West Finchley"));
 		northernLineStations.add(new Station("WSP","Woodside Park"));
-		map.put("M", northernLineStations);
+		map.put(new Line("", "N", "Northern"), northernLineStations);
 		
 		List<Station> picadillyLineStations = new ArrayList<Station>();
 		picadillyLineStations.add(new Station("ACT","Acton Town"));
@@ -364,7 +364,7 @@ public static final Map<String, List<Station>> stationsByLine = createMap();
 		picadillyLineStations.add(new Station("TPL","Turnpike Lane"));
 		picadillyLineStations.add(new Station("UXB","Uxbridge"));
 		picadillyLineStations.add(new Station("WGN","Wood Green"));
-		map.put("P", picadillyLineStations);
+		map.put(new Line("", "P", "Picadilly"), picadillyLineStations);
 		
 		List<Station> victoriaLineStations = new ArrayList<Station>();
 		victoriaLineStations.add(new Station("BHR","Blackhorse Road"));
@@ -383,12 +383,12 @@ public static final Map<String, List<Station>> stationsByLine = createMap();
 		victoriaLineStations.add(new Station("VIC","Victoria"));
 		victoriaLineStations.add(new Station("WAL","Walthamstow Cen"));
 		victoriaLineStations.add(new Station("WST","Warren Street"));
-		map.put("V", victoriaLineStations);
+		map.put(new Line("", "V", "Victoria"), victoriaLineStations);
 		
 		List<Station> waterlooLineStations = new ArrayList<Station>();
 		waterlooLineStations.add(new Station("BNK","Bank"));
 		waterlooLineStations.add(new Station("WLO","Waterloo"));
-		map.put("W", waterlooLineStations);
+		map.put(new Line("", "W", "Waterloo"), waterlooLineStations);
 		
 		return map;
     }

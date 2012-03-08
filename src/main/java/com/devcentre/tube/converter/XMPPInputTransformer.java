@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.devcentre.tube.model.Line;
 import com.devcentre.tube.model.StationHelpRequest;
 import com.devcentre.tube.model.StationsByLine;
 import com.devcentre.tube.model.TrackernetPredictionRequest;
@@ -43,7 +44,7 @@ public class XMPPInputTransformer {
 		if (split.length == 2 && split[0].equals("help")) {
 			log.info("Request [" + input + "] resulted in a Help request for line [" + split[1] + "].");
 			StationHelpRequest stationHelpRequest = new StationHelpRequest();
-			stationHelpRequest.getStations().addAll(StationsByLine.stationsByLine.get(split[1]));
+			stationHelpRequest.getStations().addAll(StationsByLine.stationsByLine.get(new Line("", split[1], "")));
 			return stationHelpRequest;
 		}
 		
