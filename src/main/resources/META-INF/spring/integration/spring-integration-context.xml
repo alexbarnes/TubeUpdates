@@ -19,26 +19,44 @@
 	<int:publish-subscribe-channel id="requestChannel"
 		apply-sequence="true" />
 
-	<int-http:outbound-gateway id="trainService"
-		url="http://cloud.tfl.gov.uk/TrackerNet/PredictionSummary/{line}"
-		request-channel="requestChannel" reply-channel="transformingChannel"
-		http-method="GET" extract-request-payload="false"
-		expected-response-type="java.lang.String">
-		<int-http:uri-variable name="line" expression="payload" />
+	<int:channel id="requestTranslationOutputChannel" />
+
+	<int:transformer id="inputTransformer" input-channel="requestChannel"
+		output-channel="requestTranslationOutputChannel" ref="inputStringTransformer"
+		method="transform" />
+
+	<bean id="inputStringTransformer" class="com.devcentre.tube.converter.XMPPInputTransformer" />
+
+	<int-http:outbound-gateway id="predictionService"
+		url="http://cloud.tfl.gov.uk/TrackerNet/predictiondetailed/{line}/{station}"
+		http-method="GET" 
+		expected-response-type="com.devcentre.tube.model.PredictionSummary"
+		request-channel="predictionChannel" 
+		reply-channel="predictionMailTransformingChannel"
+		message-converters="predictionConverter">
+
+		<int-http:uri-variable name="line"    expression="payload.line" />
+		<int-http:uri-variable name="station" expression="payload.station" />
 	</int-http:outbound-gateway>
+	
+	<int-http:outbound-gateway id="statusService"
+		url="http://cloud.tfl.gov.uk/TrackerNet/LineStatus" 
+		http-method="GET"
+		expected-response-type="com.devcentre.tube.model.StatusSummary"
+		request-channel="statusChannel" 
+		reply-channel="statusMailTransformingChannel"
+		message-converters="statusConverter">
+	</int-http:outbound-gateway>
+
+	<bean id="statusConverter" class="com.devcentre.tube.converter.StatusHttpConverter" />
+	<bean id="predictionConverter" class="com.devcentre.tube.converter.PredictionHttpConverter" />
+
+	
 
 	<int-xmpp:xmpp-connection id="googleTalkConnection"
 		user="test@barnes-home.com" password="testing1234" host="talk.google.com"
 		port="5222" resource="resource" service-name="gmail.com" />
 
-	<int:channel id="enrichmentChannel" />
-
-	<int-mail:header-enricher input-channel="enrichmentChannel"
-		output-channel="mailChannel">
-		<int-mail:from value="test@barnes-home.com" />
-		<int-mail:to value="alex@barnes-home.com" />
-		<int-mail:subject value="Train Status" />
-	</int-mail:header-enricher>
 
 	<int:channel id="mailChannel" />
 
@@ -48,8 +66,8 @@
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="smtp.gmail.com" />
 		<property name="port" value="587" />
-		<property name="username" value="info@zimjobs.org" />
-		<property name="password" value="zimjobs1234" />
+		<property name="username" value="test@barnes-home.com" />
+		<property name="password" value="testing1234" />
 		<property name="javaMailProperties">
 			<props>
 				<prop key="mail.debug">true</prop>
@@ -58,9 +76,43 @@
 			</props>
 		</property>
 	</bean>
-	<bean id="statusConverter" class="com.devcentre.tube.converter.DummyTransformer" />
 
-	<int:channel id="transformingChannel" />
-	<int:transformer input-channel="transformingChannel"
-		output-channel="enrichmentChannel" expression="payload.toString()" />
+	<int:channel id="statusMailTransformingChannel" />
+	<int:channel id="predictionMailTransformingChannel" />
+
+	<int:transformer input-channel="predictionMailTransformingChannel"
+		output-channel="mailChannel" ref="predictionSummaryToMailTransformer"
+		method="transform" id="predicationMailTransformer" />
+
+	<int:transformer input-channel="statusMailTransformingChannel"
+		output-channel="mailChannel" ref="statusSummaryToMailTransformer"
+		method="transform" id="statusMailTransformer" />
+
+	<int:transformer input-channel="stationHelpChannel"
+		output-channel="outboundXMPPChannel" method="transform"
+		ref="stationHelpXMPPTransformer" />
+
+	<!-- Transformer beans -->
+	<bean id="predictionSummaryToMailTransformer"
+		class="com.devcentre.tube.converter.PredictionSummaryToMailTransformer" />
+	<bean id="statusSummaryToMailTransformer"
+		class="com.devcentre.tube.converter.StatusSummaryToMailTranformer" />
+	<bean id="stationHelpXMPPTransformer" class="com.devcentre.tube.converter.StationHelpXMPPTransformer" />
+
+	<int:payload-type-router input-channel="requestTranslationOutputChannel">
+		<int:mapping channel="statusChannel"
+			type="com.devcentre.tube.model.TrackernetStatusRequest" />
+		<int:mapping channel="predictionChannel"
+			type="com.devcentre.tube.model.TrackernetPredictionRequest" />
+		<int:mapping channel="stationHelpChannel"
+			type="com.devcentre.tube.model.StationHelpRequest" />
+	</int:payload-type-router>
+
+	<int:channel id="statusChannel" />
+	<int:channel id="predictionChannel" />
+	<int:channel id="outboundXMPPChannel" />
+
+	<int-xmpp:outbound-channel-adapter
+		xmpp-connection="googleTalkConnection" channel="outboundXMPPChannel" />
+	<int:channel id="stationHelpChannel" />
 </beans>
