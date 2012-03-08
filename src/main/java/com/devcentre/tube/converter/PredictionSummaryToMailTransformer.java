@@ -26,7 +26,6 @@ public class PredictionSummaryToMailTransformer {
 		message.setTo(StringUtils.split(from, "/")[0]);
 		message.setSubject("Status");
 		
-		
 		StringBuffer buffer = new StringBuffer();
 		
 		for (Platform platform : payload.getPlatforms()) {

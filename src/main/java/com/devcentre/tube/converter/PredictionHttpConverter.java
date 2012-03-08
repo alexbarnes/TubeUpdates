@@ -51,11 +51,10 @@ public class PredictionHttpConverter implements HttpMessageConverter<PredictionS
 			Document document =
 				DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputMessage.getBody());
 			
-			
-			
 			XPathExpression platformXp = XPathExpressionFactory.createXPathExpression("//S/P");	
 			List<Node> platforms = platformXp.evaluateAsNodeList(document);
 			
+			// Work through the platforms
 			for (Node node : platforms) {
 				Platform platform = new Platform(node.getAttributes().getNamedItem("N").getTextContent());
 				summary.getPlatforms().add(platform);

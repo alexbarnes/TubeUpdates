@@ -98,7 +98,9 @@
 		<constructor-arg ref="mailSender"/>
 	</bean>
 	<bean id="statusSummaryToMailTransformer"
-		class="com.devcentre.tube.converter.StatusSummaryToMailTranformer" />
+		class="com.devcentre.tube.converter.StatusSummaryToMailTranformer" >
+		<constructor-arg ref="mailSender"/>	
+	</bean>
 	<bean id="stationHelpXMPPTransformer" class="com.devcentre.tube.converter.StationHelpXMPPTransformer" />
 
 	<int:payload-type-router input-channel="requestTranslationOutputChannel">
